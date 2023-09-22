@@ -27,30 +27,30 @@ public abstract class CrudService<TDto, TDomain> : BaseService<TDto, TDomain> wh
     public Result<TDto> Get(int id)
     {
         var result = CrudRepository.Get(id);
-        return result == null ? Result.Fail(FailureCode.NotFound) : MapToDto(result);
+        return MapResult(result.Value);
     }
 
     public virtual Result<TDto> Create(TDto entity)
     {
-        var createdEntity = CrudRepository.Create(MapToDomain(entity));
-
-        return MapToDto(createdEntity);
+        var result = CrudRepository.Create(MapToDomain(entity));
+        return MapResult(result);
     }
 
     public virtual Result<TDto> Update(TDto entity)
     {
-        var updatedEntity = CrudRepository.Update(MapToDomain(entity));
+        var result = CrudRepository.Update(MapToDomain(entity));
+        return MapResult(result);
+    }
 
-        return MapToDto(updatedEntity);
+    private Result<TDto> MapResult(Result<TDomain> result)
+    {
+        if (result.IsFailed) return Result.Fail(result.Errors);
+        return MapToDto(result.Value);
     }
 
     public virtual Result Delete(int id)
     {
-        var entity = CrudRepository.Get(id);
-        if (entity is null) return Result.Fail(FailureCode.NotFound);
-
-        CrudRepository.Delete(entity);
-
-        return Result.Ok();
+        var result = CrudRepository.Delete(id);
+        return result.IsFailed ? Result.Fail(result.Errors) : Result.Ok();
     }
 }

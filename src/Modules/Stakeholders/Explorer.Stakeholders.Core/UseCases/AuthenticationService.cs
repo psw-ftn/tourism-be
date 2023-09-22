@@ -34,9 +34,8 @@ public class AuthenticationService : IAuthenticationService
         if(_userRepository.Exists(account.Email)) return Result.Fail(FailureCode.NonUniqueUsername);
 
         var user = _userRepository.Create(new User(account.Email, account.Password, UserRole.Tourist));
-        var person = new Person(user.Id, account.Name, account.Surname, account.Email);
-        person = _personRepository.Create(person);
+        var result = _personRepository.Create(new Person(user.Id, account.Name, account.Surname, account.Email));
 
-        return _tokenGenerator.GenerateAccessToken(user, person.Id);
+        return _tokenGenerator.GenerateAccessToken(user, result.Value.Id);
     }
 }

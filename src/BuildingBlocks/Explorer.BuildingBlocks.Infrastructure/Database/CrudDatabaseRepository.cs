@@ -1,5 +1,6 @@
 ﻿using Explorer.BuildingBlocks.Core.Domain;
 using Explorer.BuildingBlocks.Core.UseCases;
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace Explorer.BuildingBlocks.Infrastructure.Database;
@@ -17,35 +18,49 @@ public class CrudDatabaseRepository<TEntity, TDbContext> : ICrudRepository<TEnti
         _dbSet = DbContext.Set<TEntity>();
     }
 
-    public PagedResult<TEntity> GetPaged(int page, int pageSize)
+    public Result<PagedResult<TEntity>> GetPaged(int page, int pageSize)
     {
         var task = _dbSet.GetPagedById(page, pageSize);
         task.Wait();
         return task.Result;
     }
 
-    public TEntity? Get(long id)
+    public Result<TEntity> Get(long id)
     {
-        return _dbSet.Find(id);
+        var entity = _dbSet.Find(id);
+        if (entity == null) return Result.Fail(FailureCode.NotFound);
+        return entity;
     }
 
-    public TEntity Create(TEntity entity)
+    public Result<TEntity> Create(TEntity entity)
     {
         _dbSet.Add(entity);
         DbContext.SaveChanges();
         return entity;
     }
 
-    public TEntity Update(TEntity entity)
+    public Result<TEntity> Update(TEntity entity)
     {
-        DbContext.Update(entity);
-        DbContext.SaveChanges();
+        try
+        {
+            DbContext.Update(entity);
+            DbContext.SaveChanges();
+        }
+        catch (DbUpdateException)
+        {
+            return Result.Fail(FailureCode.NotFound);
+        }
         return entity;
     }
 
-    public void Delete(TEntity entity)
+    public Result Delete(long id)
     {
-        _dbSet.Remove(entity);
+        var result = Get(id);
+        if (result.IsFailed) return Result.Fail(result.Errors);
+
+        _dbSet.Remove(result.Value);
         DbContext.SaveChanges();
+
+        return Result.Ok();
     }
 }
