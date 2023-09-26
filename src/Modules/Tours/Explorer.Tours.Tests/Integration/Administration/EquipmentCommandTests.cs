@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 
-namespace Explorer.Tours.Tests.Integration.Management;
+namespace Explorer.Tours.Tests.Integration.Administration;
 
 [Collection("Sequential")]
 public class EquipmentCommandTests : BaseToursIntegrationTest
