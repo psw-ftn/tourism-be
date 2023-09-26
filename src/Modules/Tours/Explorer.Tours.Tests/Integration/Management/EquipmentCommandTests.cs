@@ -1,6 +1,6 @@
 ﻿using Explorer.API.Controllers.Administrator.Management;
 using Explorer.Tours.API.Dtos;
-using Explorer.Tours.API.Public.Management;
+using Explorer.Tours.API.Public.Administration;
 using Explorer.Tours.Infrastructure.Database;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
