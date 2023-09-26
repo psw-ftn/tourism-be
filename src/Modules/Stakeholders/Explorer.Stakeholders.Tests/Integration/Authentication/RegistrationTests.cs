@@ -24,6 +24,7 @@ public class RegistrationTests : BaseStakeholdersIntegrationTest
         var controller = CreateController(scope);
         var account = new AccountRegistrationDto
         {
+            Username = "turistaA@gmail.com",
             Email = "turistaA@gmail.com",
             Password = "turistaA",
             Name = "Žika",

@@ -26,31 +26,57 @@ public abstract class CrudService<TDto, TDomain> : BaseService<TDto, TDomain> wh
 
     public Result<TDto> Get(int id)
     {
-        var result = CrudRepository.Get(id);
-        return MapResult(result.Value);
+        try
+        {
+            var result = CrudRepository.Get(id);
+            return MapToDto(result);
+        }
+        catch (KeyNotFoundException e)
+        {
+            return Result.Fail(FailureCode.NotFound).WithError(e.Message);
+        }
     }
 
     public virtual Result<TDto> Create(TDto entity)
     {
-        var result = CrudRepository.Create(MapToDomain(entity));
-        return MapResult(result);
+        try
+        {
+            var result = CrudRepository.Create(MapToDomain(entity));
+            return MapToDto(result);
+        }
+        catch (ArgumentException e)
+        {
+            return Result.Fail(FailureCode.InvalidArgument).WithError(e.Message);
+        }
     }
 
     public virtual Result<TDto> Update(TDto entity)
     {
-        var result = CrudRepository.Update(MapToDomain(entity));
-        return MapResult(result);
-    }
-
-    private Result<TDto> MapResult(Result<TDomain> result)
-    {
-        if (result.IsFailed) return Result.Fail(result.Errors);
-        return MapToDto(result.Value);
+        try
+        {
+            var result = CrudRepository.Update(MapToDomain(entity));
+            return MapToDto(result);
+        }
+        catch (KeyNotFoundException e)
+        {
+            return Result.Fail(FailureCode.NotFound).WithError(e.Message);
+        }
+        catch (ArgumentException e)
+        {
+            return Result.Fail(FailureCode.InvalidArgument).WithError(e.Message);
+        }
     }
 
     public virtual Result Delete(int id)
     {
-        var result = CrudRepository.Delete(id);
-        return result.IsFailed ? Result.Fail(result.Errors) : Result.Ok();
+        try
+        {
+            CrudRepository.Delete(id);
+            return Result.Ok();
+        }
+        catch (KeyNotFoundException e)
+        {
+            return Result.Fail(FailureCode.NotFound).WithError(e.Message);
+        }
     }
 }

@@ -39,7 +39,26 @@ public class EquipmentCommandTests : BaseToursIntegrationTest
         storedEntity.ShouldNotBeNull();
         storedEntity.Id.ShouldBe(result.Id);
     }
-    
+
+    [Fact]
+    public void Create_fails_invalid_data()
+    {
+        // Arrange
+        using var scope = Factory.Services.CreateScope();
+        var controller = CreateController(scope);
+        var updatedEntity = new EquipmentDto
+        {
+            Description = "Test"
+        };
+
+        // Act
+        var result = (ObjectResult)controller.Create(updatedEntity).Result;
+
+        // Assert
+        result.ShouldNotBeNull();
+        result.StatusCode.ShouldBe(400);
+    }
+
     [Fact]
     public void Updates()
     {
@@ -79,7 +98,8 @@ public class EquipmentCommandTests : BaseToursIntegrationTest
         var controller = CreateController(scope);
         var updatedEntity = new EquipmentDto
         {
-            Id = -1000
+            Id = -1000,
+            Name = "Test"
         };
 
         // Act
@@ -89,7 +109,7 @@ public class EquipmentCommandTests : BaseToursIntegrationTest
         result.ShouldNotBeNull();
         result.StatusCode.ShouldBe(404);
     }
-    
+
     [Fact]
     public void Deletes()
     {

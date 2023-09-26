@@ -9,13 +9,19 @@ public class User : Entity
     public UserRole Role { get; private set; }
     public bool IsActive { get; set; }
 
-    private User() {}
-    public User(string username, string password, UserRole role)
+    public User(string username, string password, UserRole role, bool isActive)
     {
         Username = username;
         Password = password;
         Role = role;
-        IsActive = true;
+        IsActive = isActive;
+        Validate();
+    }
+
+    private void Validate()
+    {
+        if (string.IsNullOrWhiteSpace(Username)) throw new ArgumentException("Invalid Name");
+        if (string.IsNullOrWhiteSpace(Password)) throw new ArgumentException("Invalid Surname");
     }
 
     public string GetPrimaryRoleName()

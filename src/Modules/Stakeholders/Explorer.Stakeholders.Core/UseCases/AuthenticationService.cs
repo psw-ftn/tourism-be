@@ -23,19 +23,35 @@ public class AuthenticationService : IAuthenticationService
     public Result<AuthenticationTokensDto> Login(CredentialsDto credentials)
     {
         var user = _userRepository.GetActiveByName(credentials.Username);
-        if (user == null || credentials.Password != user.Password)
-            return Result.Fail(FailureCode.NotFound);
-            
-        return _tokenGenerator.GenerateAccessToken(user, _userRepository.GetPersonId(user.Id));
+        if (user == null || credentials.Password != user.Password) return Result.Fail(FailureCode.NotFound);
+
+        long personId = 0;
+        try
+        {
+            personId = _userRepository.GetPersonId(user.Id);
+        }
+        catch (KeyNotFoundException e)
+        {
+            Result.Fail(FailureCode.Internal).WithError(e.Message);
+        }
+        return _tokenGenerator.GenerateAccessToken(user, personId);
     }
 
     public Result<AuthenticationTokensDto> RegisterTourist(AccountRegistrationDto account)
     {
-        if(_userRepository.Exists(account.Email)) return Result.Fail(FailureCode.NonUniqueUsername);
+        if(_userRepository.Exists(account.Username)) return Result.Fail(FailureCode.NonUniqueUsername);
 
-        var user = _userRepository.Create(new User(account.Email, account.Password, UserRole.Tourist));
-        var result = _personRepository.Create(new Person(user.Id, account.Name, account.Surname, account.Email));
+        try
+        {
+            var user = _userRepository.Create(new User(account.Username, account.Password, UserRole.Tourist, true));
+            var person = _personRepository.Create(new Person(user.Id, account.Name, account.Surname, account.Email));
 
-        return _tokenGenerator.GenerateAccessToken(user, result.Value.Id);
+            return _tokenGenerator.GenerateAccessToken(user, person.Id);
+        }
+        catch (ArgumentException e)
+        {
+            return Result.Fail(FailureCode.InvalidArgument).WithError(e.Message);
+            // There is a subtle issue here. Can you find it?
+        }
     }
 }
