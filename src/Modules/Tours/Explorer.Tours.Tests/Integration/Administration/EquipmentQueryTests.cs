@@ -16,11 +16,14 @@ public class EquipmentQueryTests : BaseToursIntegrationTest
     [Fact]
     public void Retrieves_all()
     {
+        // Arrange
         using var scope = Factory.Services.CreateScope();
         var controller = CreateController(scope);
 
-        var result = ((OkObjectResult)controller.GetAll(0, 0).Result)?.Value as PagedResult<EquipmentDto>;
+        // Act
+        var result = ((ObjectResult)controller.GetAll(0, 0).Result)?.Value as PagedResult<EquipmentDto>;
 
+        // Assert
         result.ShouldNotBeNull();
         result.Results.Count.ShouldBe(3);
         result.TotalCount.ShouldBe(3);
