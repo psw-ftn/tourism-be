@@ -4,7 +4,7 @@ using Explorer.Tours.API.Public.Administration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Explorer.API.Controllers.Administrator.Management
+namespace Explorer.API.Controllers.Administrator.Administration
 {
     [Authorize(Policy = "administratorPolicy")]
     [Route("api/management/equipment")]

@@ -1,4 +1,4 @@
-﻿using Explorer.API.Controllers.Administrator.Management;
+﻿using Explorer.API.Controllers.Administrator.Administration;
 using Explorer.Tours.API.Dtos;
 using Explorer.Tours.API.Public.Administration;
 using Explorer.Tours.Infrastructure.Database;

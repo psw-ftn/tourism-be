@@ -25,14 +25,14 @@ public class AuthenticationService : IAuthenticationService
         var user = _userRepository.GetActiveByName(credentials.Username);
         if (user == null || credentials.Password != user.Password) return Result.Fail(FailureCode.NotFound);
 
-        long personId = 0;
+        long personId;
         try
         {
             personId = _userRepository.GetPersonId(user.Id);
         }
-        catch (KeyNotFoundException e)
+        catch (KeyNotFoundException)
         {
-            Result.Fail(FailureCode.Internal).WithError(e.Message);
+            personId = 0;
         }
         return _tokenGenerator.GenerateAccessToken(user, personId);
     }
