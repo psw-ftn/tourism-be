@@ -20,7 +20,8 @@ public abstract class BaseTestFactory<TDbContext> : WebApplicationFactory<Progra
             var db = scopedServices.GetRequiredService<TDbContext>();
             var logger = scopedServices.GetRequiredService<ILogger<BaseTestFactory<TDbContext>>>();
 
-            InitializeDatabase(db, "../../../TestData/", logger);
+            var path = Path.Combine(".", "..", "..", "..", "TestData");
+            InitializeDatabase(db, path, logger);
         });
     }
 
@@ -40,6 +41,7 @@ public abstract class BaseTestFactory<TDbContext> : WebApplicationFactory<Progra
         try
         {
             var scriptFiles = Directory.GetFiles(scriptFolder);
+            Array.Sort(scriptFiles);
             var script = string.Join('\n', scriptFiles.Select(File.ReadAllText));
             context.Database.ExecuteSqlRaw(script);
         }
