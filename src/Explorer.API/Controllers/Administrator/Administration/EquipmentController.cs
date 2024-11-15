@@ -31,15 +31,15 @@ namespace Explorer.API.Controllers.Administrator.Administration
             return CreateResponse(result);
         }
 
-        [HttpPut("{id:int}")]
+        [HttpPut("{id:long}")]
         public ActionResult<EquipmentDto> Update([FromBody] EquipmentDto equipment)
         {
             var result = _equipmentService.Update(equipment);
             return CreateResponse(result);
         }
 
-        [HttpDelete("{id:int}")]
-        public ActionResult Delete(int id)
+        [HttpDelete("{id:long}")]
+        public ActionResult Delete(long id)
         {
             var result = _equipmentService.Delete(id);
             return CreateResponse(result);
