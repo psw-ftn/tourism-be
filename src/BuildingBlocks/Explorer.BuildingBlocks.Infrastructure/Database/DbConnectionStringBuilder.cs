@@ -10,10 +10,9 @@ public static class DbConnectionStringBuilder
         var schema = Environment.GetEnvironmentVariable("DATABASE_SCHEMA_NAME") ?? schemaName;
         var user = Environment.GetEnvironmentVariable("DATABASE_USERNAME") ?? "postgres";
         var password = Environment.GetEnvironmentVariable("DATABASE_PASSWORD") ?? "root";
-        var integratedSecurity = Environment.GetEnvironmentVariable("DATABASE_INTEGRATED_SECURITY") ?? "false";
         var pooling = Environment.GetEnvironmentVariable("DATABASE_POOLING") ?? "true";
 
         return
-            $"Server={server};Port={port};Database={database};SearchPath={schema};User ID={user};Password={password};Integrated Security={integratedSecurity};Pooling={pooling};";
+            $"Server={server};Port={port};Database={database};SearchPath={schema};User ID={user};Password={password};Pooling={pooling};";
     }
 }
