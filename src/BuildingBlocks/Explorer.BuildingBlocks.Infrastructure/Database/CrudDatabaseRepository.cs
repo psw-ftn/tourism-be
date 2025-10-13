@@ -1,4 +1,5 @@
 ﻿using Explorer.BuildingBlocks.Core.Domain;
+using Explorer.BuildingBlocks.Core.Exceptions;
 using Explorer.BuildingBlocks.Core.UseCases;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,7 +28,7 @@ public class CrudDatabaseRepository<TEntity, TDbContext> : ICrudRepository<TEnti
     public TEntity Get(long id)
     {
         var entity = _dbSet.Find(id);
-        if (entity == null) throw new KeyNotFoundException("Not found: " + id);
+        if (entity == null) throw new NotFoundException("Not found: " + id);
         return entity;
     }
 
@@ -47,7 +48,7 @@ public class CrudDatabaseRepository<TEntity, TDbContext> : ICrudRepository<TEnti
         }
         catch (DbUpdateException e)
         {
-            throw new KeyNotFoundException(e.Message);
+            throw new NotFoundException(e.Message);
         }
         return entity;
     }

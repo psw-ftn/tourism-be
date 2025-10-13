@@ -1,3 +1,4 @@
+using Explorer.API.Middleware;
 using Explorer.API.Startup;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,22 +13,22 @@ builder.Services.RegisterModules();
 
 var app = builder.Build();
 
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
-    app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 else
 {
-    app.UseExceptionHandler("/error");
     app.UseHsts();
 }
 
 app.UseRouting();
 app.UseCors(corsPolicy);
 app.UseHttpsRedirection();
-app.UseAuthorization();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

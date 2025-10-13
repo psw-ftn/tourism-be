@@ -41,11 +41,8 @@ public class LoginTests : BaseStakeholdersIntegrationTest
         var controller = CreateController(scope);
         var loginSubmission = new CredentialsDto { Username = "turistaY@gmail.com", Password = "turista1" };
 
-        // Act
-        var result = (ObjectResult)controller.Login(loginSubmission).Result;
-
-        // Assert
-        result.StatusCode.ShouldBe(404);
+        // Act & Assert
+        Should.Throw<UnauthorizedAccessException>(() => controller.Login(loginSubmission));
     }
 
     [Fact]
@@ -56,11 +53,8 @@ public class LoginTests : BaseStakeholdersIntegrationTest
         var controller = CreateController(scope);
         var loginSubmission = new CredentialsDto { Username = "turista3@gmail.com", Password = "123" };
 
-        // Act
-        var result = (ObjectResult)controller.Login(loginSubmission).Result;
-
-        // Assert
-        result.StatusCode.ShouldBe(404);
+        // Act & Assert
+        Should.Throw<UnauthorizedAccessException>(() => controller.Login(loginSubmission));
     }
 
     private static AuthenticationController CreateController(IServiceScope scope)

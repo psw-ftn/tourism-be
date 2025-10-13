@@ -1,7 +1,6 @@
 ﻿using Explorer.Stakeholders.API.Dtos;
 using Explorer.Stakeholders.Core.Domain;
 using Explorer.Stakeholders.Core.UseCases;
-using FluentResults;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -15,7 +14,7 @@ public class JwtGenerator : ITokenGenerator
     private readonly string _issuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ?? "explorer";
     private readonly string _audience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? "explorer-front.com";
 
-    public Result<AuthenticationTokensDto> GenerateAccessToken(User user, long personId)
+    public AuthenticationTokensDto GenerateAccessToken(User user, long personId)
     {
         var authenticationResponse = new AuthenticationTokensDto();
 

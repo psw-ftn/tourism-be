@@ -1,9 +1,9 @@
-﻿using Explorer.BuildingBlocks.Core.UseCases;
+﻿using Explorer.BuildingBlocks.Core.Exceptions;
+using Explorer.BuildingBlocks.Core.UseCases;
 using Explorer.Stakeholders.API.Dtos;
 using Explorer.Stakeholders.API.Public;
 using Explorer.Stakeholders.Core.Domain;
 using Explorer.Stakeholders.Core.Domain.RepositoryInterfaces;
-using FluentResults;
 
 namespace Explorer.Stakeholders.Core.UseCases;
 
@@ -20,10 +20,13 @@ public class AuthenticationService : IAuthenticationService
         _personRepository = personRepository;
     }
 
-    public Result<AuthenticationTokensDto> Login(CredentialsDto credentials)
+    public AuthenticationTokensDto Login(CredentialsDto credentials)
     {
         var user = _userRepository.GetActiveByName(credentials.Username);
-        if (user == null || credentials.Password != user.Password) return Result.Fail(FailureCode.NotFound);
+        if (user == null || credentials.Password != user.Password)
+        {
+            throw new UnauthorizedAccessException("Invalid credentials");
+        }
 
         long personId;
         try
@@ -37,21 +40,14 @@ public class AuthenticationService : IAuthenticationService
         return _tokenGenerator.GenerateAccessToken(user, personId);
     }
 
-    public Result<AuthenticationTokensDto> RegisterTourist(AccountRegistrationDto account)
+    public AuthenticationTokensDto RegisterTourist(AccountRegistrationDto account)
     {
-        if(_userRepository.Exists(account.Username)) return Result.Fail(FailureCode.NonUniqueUsername);
+        if(_userRepository.Exists(account.Username))
+            throw new EntityValidationException("Provided username already exists.");
 
-        try
-        {
-            var user = _userRepository.Create(new User(account.Username, account.Password, UserRole.Tourist, true));
-            var person = _personRepository.Create(new Person(user.Id, account.Name, account.Surname, account.Email));
+        var user = _userRepository.Create(new User(account.Username, account.Password, UserRole.Tourist, true));
+        var person = _personRepository.Create(new Person(user.Id, account.Name, account.Surname, account.Email));
 
-            return _tokenGenerator.GenerateAccessToken(user, person.Id);
-        }
-        catch (ArgumentException e)
-        {
-            return Result.Fail(FailureCode.InvalidArgument).WithError(e.Message);
-            // There is a subtle issue here. Can you find it?
-        }
+        return _tokenGenerator.GenerateAccessToken(user, person.Id);
     }
 }

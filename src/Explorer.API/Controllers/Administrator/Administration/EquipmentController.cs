@@ -4,45 +4,42 @@ using Explorer.Tours.API.Public.Administration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Explorer.API.Controllers.Administrator.Administration
+namespace Explorer.API.Controllers.Administrator.Administration;
+
+[Authorize(Policy = "administratorPolicy")]
+[Route("api/administration/equipment")]
+[ApiController]
+public class EquipmentController : ControllerBase
 {
-    [Authorize(Policy = "administratorPolicy")]
-    [Route("api/administration/equipment")]
-    public class EquipmentController : BaseApiController
+    private readonly IEquipmentService _equipmentService;
+
+    public EquipmentController(IEquipmentService equipmentService)
     {
-        private readonly IEquipmentService _equipmentService;
+        _equipmentService = equipmentService;
+    }
 
-        public EquipmentController(IEquipmentService equipmentService)
-        {
-            _equipmentService = equipmentService;
-        }
+    [HttpGet]
+    public ActionResult<PagedResult<EquipmentDto>> GetAll([FromQuery] int page, [FromQuery] int pageSize)
+    {
+        return Ok(_equipmentService.GetPaged(page, pageSize));
+    }
 
-        [HttpGet]
-        public ActionResult<PagedResult<EquipmentDto>> GetAll([FromQuery] int page, [FromQuery] int pageSize)
-        {
-            var result = _equipmentService.GetPaged(page, pageSize);
-            return CreateResponse(result);
-        }
+    [HttpPost]
+    public ActionResult<EquipmentDto> Create([FromBody] EquipmentDto equipment)
+    {
+        return Ok(_equipmentService.Create(equipment));
+    }
 
-        [HttpPost]
-        public ActionResult<EquipmentDto> Create([FromBody] EquipmentDto equipment)
-        {
-            var result = _equipmentService.Create(equipment);
-            return CreateResponse(result);
-        }
+    [HttpPut("{id:long}")]
+    public ActionResult<EquipmentDto> Update([FromBody] EquipmentDto equipment)
+    {
+        return Ok(_equipmentService.Update(equipment));
+    }
 
-        [HttpPut("{id:long}")]
-        public ActionResult<EquipmentDto> Update([FromBody] EquipmentDto equipment)
-        {
-            var result = _equipmentService.Update(equipment);
-            return CreateResponse(result);
-        }
-
-        [HttpDelete("{id:long}")]
-        public ActionResult Delete(long id)
-        {
-            var result = _equipmentService.Delete(id);
-            return CreateResponse(result);
-        }
+    [HttpDelete("{id:long}")]
+    public ActionResult Delete(long id)
+    {
+        _equipmentService.Delete(id);
+        return Ok();
     }
 }

@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace Explorer.API.Controllers;
 
 [Route("api/users")]
-public class AuthenticationController : BaseApiController
+[ApiController]
+public class AuthenticationController : ControllerBase
 {
     private readonly IAuthenticationService _authenticationService;
 
@@ -17,14 +18,12 @@ public class AuthenticationController : BaseApiController
     [HttpPost]
     public ActionResult<AuthenticationTokensDto> RegisterTourist([FromBody] AccountRegistrationDto account)
     {
-        var result = _authenticationService.RegisterTourist(account);
-        return CreateResponse(result);
+        return Ok(_authenticationService.RegisterTourist(account));
     }
 
     [HttpPost("login")]
     public ActionResult<AuthenticationTokensDto> Login([FromBody] CredentialsDto credentials)
     {
-        var result = _authenticationService.Login(credentials);
-        return CreateResponse(result);
+        return Ok(_authenticationService.Login(credentials));
     }
 }

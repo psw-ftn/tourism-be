@@ -1,4 +1,5 @@
 ﻿using Explorer.API.Controllers.Administrator.Administration;
+using Explorer.BuildingBlocks.Core.Exceptions;
 using Explorer.Tours.API.Dtos;
 using Explorer.Tours.API.Public.Administration;
 using Explorer.Tours.Infrastructure.Database;
@@ -51,12 +52,8 @@ public class EquipmentCommandTests : BaseToursIntegrationTest
             Description = "Test"
         };
 
-        // Act
-        var result = (ObjectResult)controller.Create(updatedEntity).Result;
-
-        // Assert
-        result.ShouldNotBeNull();
-        result.StatusCode.ShouldBe(400);
+        // Act & Assert
+        Should.Throw<ArgumentException>(() => controller.Create(updatedEntity));
     }
 
     [Fact]
@@ -102,12 +99,8 @@ public class EquipmentCommandTests : BaseToursIntegrationTest
             Name = "Test"
         };
 
-        // Act
-        var result = (ObjectResult)controller.Update(updatedEntity).Result;
-
-        // Assert
-        result.ShouldNotBeNull();
-        result.StatusCode.ShouldBe(404);
+        // Act & Assert
+        Should.Throw<NotFoundException>(() => controller.Update(updatedEntity));
     }
 
     [Fact]
@@ -137,12 +130,8 @@ public class EquipmentCommandTests : BaseToursIntegrationTest
         using var scope = Factory.Services.CreateScope();
         var controller = CreateController(scope);
 
-        // Act
-        var result = (ObjectResult)controller.Delete(-1000);
-
-        // Assert
-        result.ShouldNotBeNull();
-        result.StatusCode.ShouldBe(404);
+        // Act & Assert
+        Should.Throw<NotFoundException>(() => controller.Delete(-1000));
     }
     
     private static EquipmentController CreateController(IServiceScope scope)
