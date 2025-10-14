@@ -1,45 +1,45 @@
-﻿using Explorer.BuildingBlocks.Core.Domain;
-using Explorer.BuildingBlocks.Core.Exceptions;
+﻿using Explorer.BuildingBlocks.Core.Exceptions;
 using Explorer.BuildingBlocks.Core.UseCases;
+using Explorer.BuildingBlocks.Infrastructure.Database;
+using Explorer.Tours.Core.Domain;
+using Explorer.Tours.Core.Domain.RepositoryInterfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace Explorer.BuildingBlocks.Infrastructure.Database;
+namespace Explorer.Tours.Infrastructure.Database.Repositories;
 
-public class CrudDatabaseRepository<TEntity, TDbContext> : ICrudRepository<TEntity>
-    where TEntity : Entity
-    where TDbContext : DbContext
+public class EquipmentDbRepository : IEquipmentRepository
 {
-    protected readonly TDbContext DbContext;
-    private readonly DbSet<TEntity> _dbSet;
+    protected readonly ToursContext DbContext;
+    private readonly DbSet<Equipment> _dbSet;
 
-    public CrudDatabaseRepository(TDbContext dbContext)
+    public EquipmentDbRepository(ToursContext dbContext)
     {
         DbContext = dbContext;
-        _dbSet = DbContext.Set<TEntity>();
+        _dbSet = DbContext.Set<Equipment>();
     }
 
-    public PagedResult<TEntity> GetPaged(int page, int pageSize)
+    public PagedResult<Equipment> GetPaged(int page, int pageSize)
     {
         var task = _dbSet.GetPagedById(page, pageSize);
         task.Wait();
         return task.Result;
     }
 
-    public TEntity Get(long id)
+    public Equipment Get(long id)
     {
         var entity = _dbSet.Find(id);
         if (entity == null) throw new NotFoundException("Not found: " + id);
         return entity;
     }
 
-    public TEntity Create(TEntity entity)
+    public Equipment Create(Equipment entity)
     {
         _dbSet.Add(entity);
         DbContext.SaveChanges();
         return entity;
     }
 
-    public TEntity Update(TEntity entity)
+    public Equipment Update(Equipment entity)
     {
         try
         {

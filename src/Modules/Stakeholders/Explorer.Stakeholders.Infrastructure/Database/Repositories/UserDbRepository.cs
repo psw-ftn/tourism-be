@@ -3,11 +3,11 @@ using Explorer.Stakeholders.Core.Domain.RepositoryInterfaces;
 
 namespace Explorer.Stakeholders.Infrastructure.Database.Repositories;
 
-public class UserDatabaseRepository : IUserRepository
+public class UserDbRepository : IUserRepository
 {
     private readonly StakeholdersContext _dbContext;
 
-    public UserDatabaseRepository(StakeholdersContext dbContext)
+    public UserDbRepository(StakeholdersContext dbContext)
     {
         _dbContext = dbContext;
     }
