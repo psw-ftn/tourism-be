@@ -32,8 +32,12 @@ public static class StakeholdersStartup
         services.AddScoped<IPersonRepository, PersonDbRepository>();
         services.AddScoped<IUserRepository, UserDbRepository>();
 
+        var dataSourceBuilder = new NpgsqlDataSourceBuilder(DbConnectionStringBuilder.Build("stakeholders"));
+        dataSourceBuilder.EnableDynamicJson();
+        var dataSource = dataSourceBuilder.Build();
+        
         services.AddDbContext<StakeholdersContext>(opt =>
-            opt.UseNpgsql(DbConnectionStringBuilder.Build("stakeholders"),
+            opt.UseNpgsql(dataSource,
                 x => x.MigrationsHistoryTable("__EFMigrationsHistory", "stakeholders")));
     }
 }
