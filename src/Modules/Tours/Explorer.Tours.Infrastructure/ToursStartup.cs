@@ -30,8 +30,11 @@ public static class ToursStartup
     {
         services.AddScoped<IEquipmentRepository, EquipmentDbRepository>();
 
+        var dataSourceBuilder = new NpgsqlDataSourceBuilder(DbConnectionStringBuilder.Build("tours"));
+        dataSourceBuilder.EnableDynamicJson();
+        var dataSource = dataSourceBuilder.Build();
         services.AddDbContext<ToursContext>(opt =>
-            opt.UseNpgsql(DbConnectionStringBuilder.Build("tours"),
+            opt.UseNpgsql(dataSource,
                 x => x.MigrationsHistoryTable("__EFMigrationsHistory", "tours")));
     }
 }
