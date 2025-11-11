@@ -23,9 +23,12 @@ public static class BlogStartup
 
     private static void SetupInfrastructure(IServiceCollection services)
     {
-
+        var dataSourceBuilder = new NpgsqlDataSourceBuilder(DbConnectionStringBuilder.Build("blog"));
+        dataSourceBuilder.EnableDynamicJson();
+        var dataSource = dataSourceBuilder.Build();
+        
         services.AddDbContext<BlogContext>(opt =>
-            opt.UseNpgsql(DbConnectionStringBuilder.Build("blog"),
+            opt.UseNpgsql(dataSource,
                 x => x.MigrationsHistoryTable("__EFMigrationsHistory", "blog")));
     }
 }
