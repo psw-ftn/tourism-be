@@ -3,6 +3,7 @@ using Explorer.Blog.Infrastructure.Database;
 using Explorer.BuildingBlocks.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 
 namespace Explorer.Blog.Infrastructure;
 
